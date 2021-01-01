@@ -16,7 +16,7 @@ if(isset($_POST["update"])){
 	$teacher = (new Teacher())
                 ->setStartDate($startDate)
                 ->setYearsTeaching($yearsTeaching)
-				->setSpecialty($specialty)
+		->setSpecialty($specialty)
                 ->setEndDate($endDate);
 	if($teacher->pushTeacherInfo($userID)){
 		header('Location: StaffProfile.php');
