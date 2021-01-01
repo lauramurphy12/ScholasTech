@@ -18,7 +18,7 @@ class Authentication extends dbConnection {
 	
 	function __construct() {
 		$this->conn = $this->establishConnection();
-    }
+    	}
 	
 	function getLoginInfo(){
 		if(empty(trim($_POST['email'])) && empty(trim($_POST['password']))){
