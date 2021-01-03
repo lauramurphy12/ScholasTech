@@ -15,39 +15,58 @@ class User extends dbConnection {
 	function __construct(){
 	}
 	
+	public static function create(){
+		$instance = new self();
+		return $instance; 
+	}
 	public function setFirstName($par_firstname) {
-        	$this->firstname= $par_firstname;
-        	return $this;
-        }
+		$validRegex = array("options"=>array("regexp"=>"/[\w'-]{2,20}/"));
+		if(filter_var($par_firstname, FILTER_VALIDATE_REGEXP,$validRegex)){
+			   $this->firstname= $par_firstname;
+				return $this;
+		}
+		throw new Exception('invalid firstname');
+    }
 	public function setLastName($par_lastname) {
-        	$this->lastname = $par_lastname;
-        	return $this;
-   	}
+		$validRegex = array("options"=>array("regexp"=>"/[\w'-]{2,20}/"));
+		if(!filter_var($par_lastname, FILTER_VALIDATE_REGEXP,$validRegex)){
+			throw new Exception('invalid lastname');
+		}
+        $this->lastname = $par_lastname;
+        return $this;
+    }
 	public function setAddress($par_address) {
-        	$this->address = $par_address;
-        	return $this;
-    	}
+        $this->address = $par_address;
+        return $this;
+    }
 	public function setPhone($par_phone) {
-       		$this->phone = $par_phone;
-        	return $this;
-    	}
+		if(!preg_match("/\d{3}-\d{3}-\d{4}/", $par_phone)) {
+			throw new Exception('invalid phone number');
+		}
+        $this->phone = $par_phone;
+        return $this;
+    }
 	public function setEmail($par_email) {
-        	$this->email = $par_email;
-       		return $this;
-    	}
-	public function setUsertype($par_usertype){
-        	$this->usertype = $par_usertype;
-        	return $this;
-    	}
-	public function __toString(){
-       		$userInfo = 'First Name: ' . $this->firstname . PHP_EOL;
-        	$userInfo .= 'Last Name: ' . $this->lastname . PHP_EOL;
-        	$userInfo .= 'Address: ' . $this->address . PHP_EOL;
+		if(!filter_var($par_email, FILTER_VALIDATE_EMAIL)){
+			throw new Exception('invalid email address');
+		}
+        $this->email = $par_email;
+        return $this;
+    }
+	public function setUsertype($par_usertype) {
+        $this->usertype = $par_usertype;
+        return $this;
+    }
+	public function __toString()
+    {
+        $userInfo = 'First Name: ' . $this->firstname . PHP_EOL;
+        $userInfo .= 'Last Name: ' . $this->lastname . PHP_EOL;
+        $userInfo .= 'Address: ' . $this->address . PHP_EOL;
 		$userInfo .= 'Phone: ' . $this->phone . PHP_EOL;
 		$userInfo .= 'Email: ' . $this->email . PHP_EOL;
 		$userInfo .= 'Type of User: ' . $this->usertype . PHP_EOL;
-        	return $userInfo;
-   	 }
+        return $userInfo;
+    }
 	
 	function pushUserInfo(){
 		$this->conn = $this->establishConnection();
@@ -59,7 +78,6 @@ class User extends dbConnection {
 		}
 		return $userAdded;
 	}
-	
 	function pullUserInfoByID($userID){
 		$this->conn = $this->establishConnection();
 		$pullUserSQL = $this->conn->prepare("SELECT * FROM User WHERE user_id = ?");
@@ -73,12 +91,14 @@ class User extends dbConnection {
 		}
 	}	
 	function pullUserInfoByEmail($email){
+		$this->conn = $this->establishConnection();
 		$pullUserSQL = $this->conn->prepare("SELECT * FROM User WHERE email = ?");
 		$pullUserSQL->bind_param("s",$email);
 		$pullUserSQL->execute();
 		$result = $pullUserSQL->get_result();
-		if($result!=null){
-			return $result;
+		
+		if($result!=null && $result->num_rows==1){
+			return $result->fetch_assoc();
 		}else{
 			throw new Exception('Could not pull user info');
 		}
