@@ -14,28 +14,29 @@ class Teacher extends dbConnection {
 		
 	}
 	public function setStartDate($startDate) {
-        	$this->startDate= $startDate;
-        	return $this;
-    	}
+        $this->startDate= $startDate;
+        return $this;
+    }
 	public function setYearsTeaching($yearsTeaching) {
-        	$this->yearsTeaching = $yearsTeaching;
-        	return $this;
-    	}
+        $this->yearsTeaching = $yearsTeaching;
+        return $this;
+    }
 	public function setSpecialty($specialty) {
-        	$this->specialty = $specialty;
-        	return $this;
-    	}
+        $this->specialty = $specialty;
+        return $this;
+    }
 	public function setEndDate($endDate) {
-        	$this->endDate = $endDate;
-        	return $this;
-    	}
-	public function __toString(){
-        	$teacherInfo = 'Start Date: ' . $this->startDate . PHP_EOL;
-        	$teacherInfo .= 'Years Teaching: ' . $this->yearsTeaching . PHP_EOL;
-        	$teacherInfo .= 'Specialty: ' . $this->specialty . PHP_EOL;
+        $this->endDate = $endDate;
+        return $this;
+    }
+	public function __toString()
+    {
+        $teacherInfo = 'Start Date: ' . $this->startDate . PHP_EOL;
+        $teacherInfo .= 'Years Teaching: ' . $this->yearsTeaching . PHP_EOL;
+        $teacherInfo .= 'Specialty: ' . $this->specialty . PHP_EOL;
 		$teacherInfo .= 'End Date: ' . $this->endDate . PHP_EOL;
-        	return $teacherInfo;
-    	}
+        return $teacherInfo;
+    }
 	public function pushTeacherInfo($userID){
 		$this->conn = $this->establishConnection();
 		$updateTeacherSQL = $this->conn->prepare("UPDATE Teacher SET start_date= ?, years_teaching= ?, specialty= ?, end_date= ? WHERE user_id=?");
